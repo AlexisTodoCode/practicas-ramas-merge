@@ -1,0 +1,143 @@
+<div class="container mt-4">
+    <h1>Product Management</h1>
+
+    <button pButton type="button" label="Add Product" (click)="openModal()"></button>
+
+    <!-- Buscador -->
+    <div class="p-inputgroup mt-3">
+        <span class="p-inputgroup-addon">
+            <i class="pi pi-search"></i>
+        </span>
+        <input pInputText type="text" [(ngModel)]="searchTerm" placeholder="Search products..."
+            (ngModelChange)="filterProducts()">
+    </div>
+
+    <h2>Products List</h2>
+    <p-table [value]="filteredProductos">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Category</th>
+                <th>Unit of Measure</th>
+                <th>Actions</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-producto>
+            <tr>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.descripcion }}</td>
+                <td>{{ producto.precio | currency }}</td>
+                <td>{{ producto.stock }}</td>
+                <td>{{ getCategoryName(producto.categoriaId) }}</td>
+                <td>{{ getUnitName(producto.unidadMedidaId) }}</td>
+                <td>
+                    <button pButton label="Edit" (click)="openModal(producto)"></button>
+                    <button pButton label="Delete" (click)="confirmDelete(producto)"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <!-- Diálogo de confirmación de eliminación -->
+    <p-dialog header="Confirm Deletion" [(visible)]="isDeleteDialogVisible" [modal]="true"
+        [style]="{'max-width': '400px'}">
+        <div *ngIf="productToDelete">
+            <p>Are you sure you want to delete the following product?
+                <span style="color: red; font-weight: bold;">{{ productToDelete.nombre }}</span>
+            </p>
+            <div class="p-d-flex p-jc-end p-mt-3" style="gap: 10px;">
+                <button pButton label="No" (click)="cancelDelete()" class="p-button-text"></button>
+                <button pButton label="Yes" (click)="deleteProducto()" class="p-button-danger"></button>
+            </div>
+        </div>
+    </p-dialog>
+
+
+    <!-- Dialogo de añadir/editar producto -->
+    <p-dialog header="Add/Update Product" [(visible)]="isModalVisible" [modal]="true" [responsive]="true"
+        [style]="{'max-width':'600px', 'width':'90vw'}">
+        <form #productForm="ngForm" (ngSubmit)="saveProducto(selectedProducto)" novalidate>
+            <div class="p-fluid">
+                <input type="hidden" name="id" [(ngModel)]="selectedProducto.id">
+                <div class="p-field">
+                    <label for="nombre">Name:</label>
+                    <input pInputText id="nombre" name="nombre" [(ngModel)]="selectedProducto.nombre" required
+                        minlength="3">
+                    <p-message *ngIf="productForm.submitted && !selectedProducto.nombre" severity="error"
+                        text="Name is required"></p-message>
+                    <p-message *ngIf="productForm.submitted && selectedProducto.nombre.length < 3" severity="error"
+                        text="Name must be at least 3 characters long"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="descripcion">Description:</label>
+                    <input pInputText id="descripcion" name="descripcion" [(ngModel)]="selectedProducto.descripcion"
+                        required>
+                    <p-message *ngIf="productForm.submitted && !selectedProducto.descripcion" severity="error"
+                        text="Description is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="precio">Price:</label>
+                    <input pInputText id="precio" name="precio" type="number" [(ngModel)]="selectedProducto.precio"
+                        step="0.01" required>
+                    <p-message *ngIf="productForm.submitted && !selectedProducto.precio" severity="error"
+                        text="Price is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="peso">Weight:</label>
+                    <input pInputText id="peso" name="peso" type="number" [(ngModel)]="selectedProducto.peso"
+                        step="0.01" required>
+                    <p-message *ngIf="productForm.submitted && !selectedProducto.peso" severity="error"
+                        text="Weight is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="volumen">Volume:</label>
+                    <input pInputText id="volumen" name="volumen" type="number" [(ngModel)]="selectedProducto.volumen"
+                        step="0.01" required>
+                    <p-message *ngIf="productForm.submitted && !selectedProducto.volumen" severity="error"
+                        text="Volume is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="stock">Stock:</label>
+                    <input pInputText id="stock" name="stock" type="number" [(ngModel)]="selectedProducto.stock"
+                        required>
+                    <p-message *ngIf="productForm.submitted && !selectedProducto.stock" severity="error"
+                        text="Stock is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="stockMinimo">Minimum Stock:</label>
+                    <input pInputText id="stockMinimo" name="stockMinimo" type="number"
+                        [(ngModel)]="selectedProducto.stockMinimo" required>
+                    <p-message *ngIf="productForm.submitted && !selectedProducto.stockMinimo" severity="error"
+                        text="Minimum stock is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="stockMaximo">Maximum Stock:</label>
+                    <input pInputText id="stockMaximo" name="stockMaximo" type="number"
+                        [(ngModel)]="selectedProducto.stockMaximo" required>
+                    <p-message *ngIf="productForm.submitted && !selectedProducto.stockMaximo" severity="error"
+                        text="Maximum stock is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="categoriaId">Category:</label>
+                    <p-dropdown id="categoriaId" name="categoriaId" [options]="categorias"
+                        [(ngModel)]="selectedProducto.categoriaId" optionLabel="nombre" optionValue="id"
+                        required></p-dropdown>
+                    <p-message *ngIf="productForm.submitted && !selectedProducto.categoriaId" severity="error"
+                        text="Category is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="unidadMedidaId">Unit of Measure:</label>
+                    <p-dropdown id="unidadMedidaId" name="unidadMedidaId" [options]="unidades"
+                        [(ngModel)]="selectedProducto.unidadMedidaId" optionLabel="nombre" optionValue="id"
+                        required></p-dropdown>
+                    <p-message *ngIf="productForm.submitted && !selectedProducto.unidadMedidaId" severity="error"
+                        text="Unit of Measure is required"></p-message>
+                </div>
+                <button pButton type="submit" label="Save Product" class="p-mt-2"></button>
+            </div>
+        </form>
+    </p-dialog>
+</div>

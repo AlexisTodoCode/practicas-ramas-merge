@@ -1,0 +1,231 @@
+/* General container styles */
+.container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Header and Titles */
+h1, h2 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+/* Button styles */
+.p-button {
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+    font-weight: bold;
+    border: none;
+    font-size: 1rem;
+}
+
+.p-button.p-button-text {
+    background-color: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+}
+
+.p-button.p-button-text:hover {
+    background-color: #e9ecef;
+    color: #0056b3;
+}
+
+.p-button.p-button-danger {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+}
+
+.p-button.p-button-danger:hover {
+    background-color: #c82333;
+}
+
+/* Layout for buttons and search */
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.header-actions .p-button {
+    margin-left: 1rem;
+}
+
+/* Search input styles */
+.p-inputgroup {
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex: 1;
+}
+
+.p-inputgroup .p-inputgroup-addon {
+    background-color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: 4px 0 0 4px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 0.8rem;
+}
+
+.p-inputgroup .p-inputtext {
+    border-radius: 0 4px 4px 0;
+    padding: 0.8rem;
+    border: 1px solid #ced4da;
+    font-size: 1rem;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    flex: 1;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.p-inputgroup .p-inputtext:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Table styles */
+.p-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+}
+
+.p-table th, .p-table td {
+    padding: 1rem;
+    border: 1px solid #ddd;
+}
+
+.p-table th {
+    background-color: #f8f9fa;
+    text-align: left;
+    font-weight: bold;
+}
+
+/* Alternating row colors */
+.p-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.p-table tbody tr:nth-child(even) {
+    background-color: #fff;
+}
+
+/* Dialog styles */
+.p-dialog {
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+}
+
+.p-dialog .p-dialog-header {
+    background-color: #007bff;
+    color: #fff;
+    border-bottom: 1px solid #0069d9;
+    padding: 1rem;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.p-dialog .p-dialog-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Form styles */
+.p-field {
+    margin-bottom: 1.5rem;
+}
+
+.p-field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.p-field input,
+.p-field .p-dropdown {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.p-field input:focus,
+.p-field .p-dropdown .p-dropdown-label {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Dialog buttons */
+.p-dialog .p-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    justify-content: flex-end;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .p-dialog {
+        width: 95vw;
+    }
+}
+
+/* Additional styles for UI components */
+.p-message {
+    margin-top: 0.5rem;
+}
+
+.p-message.severity-error {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    border-radius: 4px;
+    padding: 0.5rem;
+}
+
+.p-dropdown {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.p-dropdown .p-dropdown-label {
+    padding: 0.8rem;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+}
+
+.p-dropdown .p-dropdown-items {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.p-dropdown .p-dropdown-item {
+    padding: 0.8rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.p-dropdown .p-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.p-dropdown .p-dropdown-item:hover {
+    background-color: #e9ecef;
+    color: #007bff;
+}
