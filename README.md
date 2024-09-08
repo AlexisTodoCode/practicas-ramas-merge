@@ -14,11 +14,11 @@ Welcome to the **Spring & Angular Projects** repository! This space is dedicated
 To get started, clone the repository to your local machine using the following command:
 
 ```bash
-git clone https://github.com/Gutierrez-16/practicas-ramas-merge.git
+https://github.com/Gutierrez-16/spring-ng-projects.git
 ```
 
 ### 2. Navigate to the Project Folder
 ```bash
-cd practicas-ramas-merge
+cd spring-ng
 ```
 
