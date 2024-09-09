@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router'; // Importa Router
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
@@ -41,7 +42,7 @@ export class HomeComponent implements OnInit {
   productToDelete: Producto | null = null;
   searchTerm = '';
 
-  constructor(private productoService: ProductoService) {}
+  constructor(private productoService: ProductoService, private router: Router) {} // Inyecta Router
 
   ngOnInit(): void {
     this.fetchProductos();
@@ -173,5 +174,9 @@ export class HomeComponent implements OnInit {
     if (unitId === undefined) return 'Unknown';
     const unit = this.unidades.find(u => u.id === unitId);
     return unit ? unit.nombre : 'Unknown';
+  }
+
+  goToCategories(): void {
+    this.router.navigate(['/categoria']); // Redirige a la ruta de categorías
   }
 }

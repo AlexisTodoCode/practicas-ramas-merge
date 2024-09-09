@@ -229,3 +229,78 @@ h1, h2 {
     background-color: #e9ecef;
     color: #007bff;
 }
+/* General container styles */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 15px;
+}
+
+/* Header styles */
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Button styles */
+button {
+    margin: 0 0.5rem;
+}
+
+/* Table styles */
+.p-table {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.p-table th, .p-table td {
+    text-align: left;
+    padding: 0.75rem;
+}
+
+.p-table th {
+    background-color: #f4f4f4;
+}
+
+/* Dialog styles */
+p-dialog {
+    border-radius: 8px;
+}
+
+.p-dialog .p-dialog-header {
+    background-color: #007bff;
+    color: white;
+}
+
+.p-dialog .p-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Form styles */
+.p-field {
+    margin-bottom: 1rem;
+}
+
+.p-field label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.p-inputtext, p-dropdown {
+    width: 100%;
+}
+
+/* Validation message styles */
+p-message {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #dc3545;
+}
+
+/* Buttons styles */
+.p-button {
+    margin-top: 1rem;
+}

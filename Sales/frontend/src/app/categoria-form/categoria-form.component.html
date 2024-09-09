@@ -1,58 +1,55 @@
 <!-- Título para la tabla -->
 <h2>Lista de Categorías</h2>
 
-<!-- Contenedor para el botón de añadir y el filtro de búsqueda -->
+<!-- Contenedor para el botón de añadir, el botón de regreso y el filtro de búsqueda -->
 <div class="filter-container">
     <button pButton label="Añadir" icon="pi pi-plus" (click)="openModal()" class="add-button"></button>
+    <button pButton label="Productos" icon="pi pi-arrow-left" (click)="goBack()" class="back-button"></button>
     <input pInputText type="text" [(ngModel)]="searchTerm" (input)="filterCategories()" placeholder="Buscar..." class="search-input" />
-  </div>
-  
-  <!-- Tabla de categorías con paginador y filtro global -->
-  <div class="table-container">
+</div>
+
+<!-- Tabla de categorías con paginador y filtro global -->
+<div class="table-container">
     <p-table [value]="filteredCategorias" [paginator]="true" [rows]="5">
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Nombre</th>
-          <th>Acciones</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-categoria>
-        <tr>
-          <td>{{ categoria.nombre }}</td>
-          <td>
-            <button pButton icon="pi pi-pencil" (click)="openModal(categoria)" label="Editar"></button>
-            <button pButton icon="pi pi-trash" (click)="confirmDelete(categoria)" label="Eliminar"></button>
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="footer">
-        <!-- La fila del pie de la tabla queda vacía si no se necesita información adicional -->
-      </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-categoria>
+            <tr>
+                <td>{{ categoria.nombre }}</td>
+                <td>
+                    <button pButton icon="pi pi-pencil" (click)="openModal(categoria)" label="Editar"></button>
+                    <button pButton icon="pi pi-trash" (click)="confirmDelete(categoria)" label="Eliminar"></button>
+                </td>
+            </tr>
+        </ng-template>
     </p-table>
-  </div>
-  
-  <!-- Diálogo para añadir o editar categoría -->
-  <p-dialog header="Categoría" [(visible)]="isModalVisible" [modal]="true" [style]="{'width': '300px'}">
+</div>
+
+<!-- Diálogo para añadir o editar categoría -->
+<p-dialog header="Categoría" [(visible)]="isModalVisible" [modal]="true" [style]="{'width': '300px'}">
     <form #categoriaForm="ngForm">
-      <div class="p-fluid">
-        <div class="p-field">
-          <label for="nombre">Nombre</label>
-          <input id="nombre" type="text" pInputText [(ngModel)]="selectedCategoria.nombre" name="nombre" required />
+        <div class="p-fluid">
+            <div class="p-field">
+                <label for="nombre">Nombre</label>
+                <input id="nombre" type="text" pInputText [(ngModel)]="selectedCategoria.nombre" name="nombre" required />
+            </div>
         </div>
-      </div>
-      <p-footer>
-        <button pButton type="button" [disabled]="!selectedCategoria.nombre" label="Guardar" (click)="saveCategoria(selectedCategoria)"></button>
-        <button pButton type="button" label="Cancelar" (click)="isModalVisible = false"></button>
-      </p-footer>
+        <p-footer>
+            <button pButton type="button" [disabled]="!selectedCategoria.nombre" label="Guardar" (click)="saveCategoria(selectedCategoria)"></button>
+            <button pButton type="button" label="Cancelar" (click)="isModalVisible = false"></button>
+        </p-footer>
     </form>
-  </p-dialog>
-  
-  <!-- Diálogo para confirmar eliminación de categoría -->
-  <p-dialog header="Confirmar Eliminación" [(visible)]="isDeleteDialogVisible" [modal]="true" [style]="{'width': '300px'}">
+</p-dialog>
+
+<!-- Diálogo para confirmar eliminación de categoría -->
+<p-dialog header="Confirmar Eliminación" [(visible)]="isDeleteDialogVisible" [modal]="true" [style]="{'width': '300px'}">
     <p>¿Está seguro de que desea eliminar esta categoría?</p>
     <p-footer>
-      <button pButton type="button" label="Sí" (click)="deleteCategoria()"></button>
-      <button pButton type="button" label="No" (click)="cancelDelete()"></button>
+        <button pButton type="button" label="Sí" (click)="deleteCategoria()"></button>
+        <button pButton type="button" label="No" (click)="cancelDelete()"></button>
     </p-footer>
-  </p-dialog>
-  
+</p-dialog>

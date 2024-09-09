@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router'; // Importa Router
 import { Categoria } from '../models/categoria';
 import { CategoriaService } from '../services/categoria.service';
 import { Observable, of } from 'rxjs';
@@ -37,7 +38,7 @@ export class CategoriaComponent implements OnInit {
   categoriaToDelete: Categoria | null = null;
   searchTerm = '';
 
-  constructor(private categoriaService: CategoriaService) {}
+  constructor(private categoriaService: CategoriaService, private router: Router) {} // Inyecta Router
 
   ngOnInit(): void {
     this.fetchCategorias();
@@ -131,5 +132,9 @@ export class CategoriaComponent implements OnInit {
     } else {
       this.filteredCategorias = this.categorias;
     }
+  }
+
+  goBack(): void {
+    this.router.navigate(['/']); // Navega a la página principal de productos
   }
 }
