@@ -10,7 +10,7 @@ import { Producto } from '../models/producto';
 import { ProductoService } from '../services/producto.service';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -91,6 +91,13 @@ export class HomeComponent implements OnInit {
   }
 
   saveProducto(producto: Producto): void {
+    // Handle validation
+    const form = document.querySelector('form') as HTMLFormElement;
+    if (!form.checkValidity()) {
+      form.reportValidity(); // Show validation messages
+      return;
+    }
+
     if (producto.id) {
       this.productoService.updateProducto(producto)
         .pipe(
