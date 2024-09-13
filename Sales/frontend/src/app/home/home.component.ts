@@ -179,4 +179,7 @@ export class HomeComponent implements OnInit {
   goToCategories(): void {
     this.router.navigate(['/categoria']); // Redirige a la ruta de categorías
   }
+  goToUnidades(): void {
+    this.router.navigate(['/unidad']); // Redirige a la ruta de categorías
+  }
 }

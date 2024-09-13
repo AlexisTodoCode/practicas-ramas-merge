@@ -1,8 +1,12 @@
 <div class="container mt-4">
     <h1>Product Management</h1>
 
-    <button pButton type="button" label="Add Product" (click)="openModal()"></button>
-    <button pButton type="button" label="Go to Categories" (click)="goToCategories()" class="ml-2"></button>
+    <!-- Botones de acción -->
+    <div class="mb-3">
+        <button pButton type="button" label="Add Product" icon="pi pi-plus" (click)="openModal()"></button>
+        <button pButton type="button" label="Go to Categories" icon="pi pi-tags" (click)="goToCategories()" class="ml-2"></button>
+        <button pButton type="button" label="Go to Unidades" icon="pi pi-cog" (click)="goToUnidades()" class="ml-2"></button>
+    </div>
 
     <!-- Buscador -->
     <div class="p-inputgroup mt-3">
@@ -13,8 +17,8 @@
             (ngModelChange)="filterProducts()">
     </div>
 
-    <h2>Products List</h2>
-    <p-table [value]="filteredProductos">
+    <h2 class="mt-4">Products List</h2>
+    <p-table [value]="filteredProductos" [paginator]="true" [rows]="10" [responsive]="true" [style]="{'min-width': '600px'}">
         <ng-template pTemplate="header">
             <tr>
                 <th>Name</th>
@@ -35,8 +39,8 @@
                 <td>{{ getCategoryName(producto.categoriaId) }}</td>
                 <td>{{ getUnitName(producto.unidadMedidaId) }}</td>
                 <td>
-                    <button pButton label="Edit" (click)="openModal(producto)"></button>
-                    <button pButton label="Delete" (click)="confirmDelete(producto)"></button>
+                    <button pButton icon="pi pi-pencil" class="p-button-text" (click)="openModal(producto)"></button>
+                    <button pButton icon="pi pi-trash" class="p-button-text p-button-danger" (click)="confirmDelete(producto)"></button>
                 </td>
             </tr>
         </ng-template>
@@ -56,86 +60,86 @@
         </div>
     </p-dialog>
 
-
-   <!-- Dialogo de añadir/editar producto -->
-<p-dialog header="Add/Update Product" [(visible)]="isModalVisible" [modal]="true" [responsive]="true"
-[style]="{'max-width':'600px', 'width':'90vw'}">
-<form #productForm="ngForm" (ngSubmit)="saveProducto(selectedProducto)" novalidate>
-    <div class="p-fluid">
-        <input type="hidden" name="id" [(ngModel)]="selectedProducto.id">
-        <div class="p-field">
-            <label for="nombre">Name:</label>
-            <input pInputText id="nombre" name="nombre" [(ngModel)]="selectedProducto.nombre" required
-                minlength="3" #nombre="ngModel">
-            <p-message *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)" severity="error"
-                text="Name is required and must be at least 3 characters long"></p-message>
-        </div>
-        <div class="p-field">
-            <label for="descripcion">Description:</label>
-            <input pInputText id="descripcion" name="descripcion" [(ngModel)]="selectedProducto.descripcion"
-                required #descripcion="ngModel">
-            <p-message *ngIf="descripcion.invalid && (descripcion.dirty || descripcion.touched)" severity="error"
-                text="Description is required"></p-message>
-        </div>
-        <div class="p-field">
-            <label for="precio">Price:</label>
-            <input pInputText id="precio" name="precio" type="number" [(ngModel)]="selectedProducto.precio"
-                step="0.01" required #precio="ngModel">
-            <p-message *ngIf="precio.invalid && (precio.dirty || precio.touched)" severity="error"
-                text="Price is required"></p-message>
-        </div>
-        <div class="p-field">
-            <label for="peso">Weight:</label>
-            <input pInputText id="peso" name="peso" type="number" [(ngModel)]="selectedProducto.peso"
-                step="0.01" required #peso="ngModel">
-            <p-message *ngIf="peso.invalid && (peso.dirty || peso.touched)" severity="error"
-                text="Weight is required"></p-message>
-        </div>
-        <div class="p-field">
-            <label for="volumen">Volume:</label>
-            <input pInputText id="volumen" name="volumen" type="number" [(ngModel)]="selectedProducto.volumen"
-                step="0.01" required #volumen="ngModel">
-            <p-message *ngIf="volumen.invalid && (volumen.dirty || volumen.touched)" severity="error"
-                text="Volume is required"></p-message>
-        </div>
-        <div class="p-field">
-            <label for="stock">Stock:</label>
-            <input pInputText id="stock" name="stock" type="number" [(ngModel)]="selectedProducto.stock"
-                required #stock="ngModel">
-            <p-message *ngIf="stock.invalid && (stock.dirty || stock.touched)" severity="error"
-                text="Stock is required"></p-message>
-        </div>
-        <div class="p-field">
-            <label for="stockMinimo">Minimum Stock:</label>
-            <input pInputText id="stockMinimo" name="stockMinimo" type="number"
-                [(ngModel)]="selectedProducto.stockMinimo" required #stockMinimo="ngModel">
-            <p-message *ngIf="stockMinimo.invalid && (stockMinimo.dirty || stockMinimo.touched)" severity="error"
-                text="Minimum stock is required"></p-message>
-        </div>
-        <div class="p-field">
-            <label for="stockMaximo">Maximum Stock:</label>
-            <input pInputText id="stockMaximo" name="stockMaximo" type="number"
-                [(ngModel)]="selectedProducto.stockMaximo" required #stockMaximo="ngModel">
-            <p-message *ngIf="stockMaximo.invalid && (stockMaximo.dirty || stockMaximo.touched)" severity="error"
-                text="Maximum stock is required"></p-message>
-        </div>
-        <div class="p-field">
-            <label for="categoriaId">Category:</label>
-            <p-dropdown id="categoriaId" name="categoriaId" [options]="categorias"
-                [(ngModel)]="selectedProducto.categoriaId" optionLabel="nombre" optionValue="id"
-                required #categoriaId="ngModel"></p-dropdown>
-            <p-message *ngIf="categoriaId.invalid && (categoriaId.dirty || categoriaId.touched)" severity="error"
-                text="Category is required"></p-message>
-        </div>
-        <div class="p-field">
-            <label for="unidadMedidaId">Unit of Measure:</label>
-            <p-dropdown id="unidadMedidaId" name="unidadMedidaId" [options]="unidades"
-                [(ngModel)]="selectedProducto.unidadMedidaId" optionLabel="nombre" optionValue="id"
-                required #unidadMedidaId="ngModel"></p-dropdown>
-            <p-message *ngIf="unidadMedidaId.invalid && (unidadMedidaId.dirty || unidadMedidaId.touched)" severity="error"
-                text="Unit of Measure is required"></p-message>
-        </div>
-        <button pButton type="submit" label="Save Product" class="p-mt-2" [disabled]="productForm.invalid"></button>
-    </div>
-</form>
-</p-dialog>
+    <!-- Diálogo de añadir/editar producto -->
+    <p-dialog header="Add/Update Product" [(visible)]="isModalVisible" [modal]="true" [responsive]="true"
+        [style]="{'max-width':'600px', 'width':'90vw'}">
+        <form #productForm="ngForm" (ngSubmit)="saveProducto(selectedProducto)" novalidate>
+            <div class="p-fluid">
+                <input type="hidden" name="id" [(ngModel)]="selectedProducto.id">
+                <div class="p-field">
+                    <label for="nombre">Name:</label>
+                    <input pInputText id="nombre" name="nombre" [(ngModel)]="selectedProducto.nombre" required
+                        minlength="3" #nombre="ngModel">
+                    <p-message *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)" severity="error"
+                        text="Name is required and must be at least 3 characters long"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="descripcion">Description:</label>
+                    <input pInputText id="descripcion" name="descripcion" [(ngModel)]="selectedProducto.descripcion"
+                        required #descripcion="ngModel">
+                    <p-message *ngIf="descripcion.invalid && (descripcion.dirty || descripcion.touched)" severity="error"
+                        text="Description is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="precio">Price:</label>
+                    <input pInputText id="precio" name="precio" type="number" [(ngModel)]="selectedProducto.precio"
+                        step="0.01" required #precio="ngModel">
+                    <p-message *ngIf="precio.invalid && (precio.dirty || precio.touched)" severity="error"
+                        text="Price is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="peso">Weight:</label>
+                    <input pInputText id="peso" name="peso" type="number" [(ngModel)]="selectedProducto.peso"
+                        step="0.01" required #peso="ngModel">
+                    <p-message *ngIf="peso.invalid && (peso.dirty || peso.touched)" severity="error"
+                        text="Weight is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="volumen">Volume:</label>
+                    <input pInputText id="volumen" name="volumen" type="number" [(ngModel)]="selectedProducto.volumen"
+                        step="0.01" required #volumen="ngModel">
+                    <p-message *ngIf="volumen.invalid && (volumen.dirty || volumen.touched)" severity="error"
+                        text="Volume is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="stock">Stock:</label>
+                    <input pInputText id="stock" name="stock" type="number" [(ngModel)]="selectedProducto.stock"
+                        required #stock="ngModel">
+                    <p-message *ngIf="stock.invalid && (stock.dirty || stock.touched)" severity="error"
+                        text="Stock is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="stockMinimo">Minimum Stock:</label>
+                    <input pInputText id="stockMinimo" name="stockMinimo" type="number"
+                        [(ngModel)]="selectedProducto.stockMinimo" required #stockMinimo="ngModel">
+                    <p-message *ngIf="stockMinimo.invalid && (stockMinimo.dirty || stockMinimo.touched)" severity="error"
+                        text="Minimum stock is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="stockMaximo">Maximum Stock:</label>
+                    <input pInputText id="stockMaximo" name="stockMaximo" type="number"
+                        [(ngModel)]="selectedProducto.stockMaximo" required #stockMaximo="ngModel">
+                    <p-message *ngIf="stockMaximo.invalid && (stockMaximo.dirty || stockMaximo.touched)" severity="error"
+                        text="Maximum stock is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="categoriaId">Category:</label>
+                    <p-dropdown id="categoriaId" name="categoriaId" [options]="categorias"
+                        [(ngModel)]="selectedProducto.categoriaId" optionLabel="nombre" optionValue="id"
+                        required #categoriaId="ngModel"></p-dropdown>
+                    <p-message *ngIf="categoriaId.invalid && (categoriaId.dirty || categoriaId.touched)" severity="error"
+                        text="Category is required"></p-message>
+                </div>
+                <div class="p-field">
+                    <label for="unidadMedidaId">Unit of Measure:</label>
+                    <p-dropdown id="unidadMedidaId" name="unidadMedidaId" [options]="unidades"
+                        [(ngModel)]="selectedProducto.unidadMedidaId" optionLabel="nombre" optionValue="id"
+                        required #unidadMedidaId="ngModel"></p-dropdown>
+                    <p-message *ngIf="unidadMedidaId.invalid && (unidadMedidaId.dirty || unidadMedidaId.touched)" severity="error"
+                        text="Unit of Measure is required"></p-message>
+                </div>
+                <button pButton type="submit" label="Save Product" class="p-mt-2" [disabled]="productForm.invalid"></button>
+            </div>
+        </form>
+    </p-dialog>
+</div>

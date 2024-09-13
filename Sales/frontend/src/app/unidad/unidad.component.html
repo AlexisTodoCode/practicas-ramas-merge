@@ -1,1 +1,57 @@
-<p>unidad works!</p>
+<!-- Título para la tabla -->
+<h2>Lista de Unidades</h2>
+
+<!-- Contenedor para el botón de añadir, el botón de regreso y el filtro de búsqueda -->
+<div class="filter-container">
+    <button pButton label="Añadir" icon="pi pi-plus" (click)="showDialog()" class="add-button"></button>
+    <button pButton label="Productos" icon="pi pi-arrow-left" (click)="goBack()" class="back-button"></button>
+    <input pInputText type="text" [(ngModel)]="searchTerm" (input)="filterUnidades()" placeholder="Buscar..." class="search-input" />
+</div>
+
+<!-- Tabla de unidades con paginador y filtro global -->
+<div class="table-container">
+    <p-table [value]="(unidades$ | async) ?? []" [paginator]="true" [rows]="5">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-unidad>
+            <tr>
+                <td>{{ unidad.id }}</td>
+                <td>{{ unidad.nombre }}</td>
+                <td>
+                    <button pButton icon="pi pi-pencil" (click)="showDialog(unidad)" label="Editar"></button>
+                    <button pButton icon="pi pi-trash" (click)="confirmDelete(unidad)" label="Eliminar"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<!-- Diálogo para añadir o editar unidad -->
+<p-dialog header="Unidad" [(visible)]="displayDialog" [modal]="true" [style]="{'width': '300px'}">
+    <form #unidadForm="ngForm">
+        <div class="p-fluid">
+            <div class="p-field">
+                <label for="nombre">Nombre</label>
+                <input id="nombre" type="text" pInputText [(ngModel)]="selectedUnidad.nombre" name="nombre" required />
+            </div>
+        </div>
+        <p-footer>
+            <button pButton type="button" [disabled]="!selectedUnidad.nombre" label="Guardar" (click)="saveUnidad()"></button>
+            <button pButton type="button" label="Cancelar" (click)="displayDialog = false"></button>
+        </p-footer>
+    </form>
+</p-dialog>
+
+<!-- Diálogo para confirmar eliminación de unidad -->
+<p-dialog header="Confirmar Eliminación" [(visible)]="isDeleteDialogVisible" [modal]="true" [style]="{'width': '300px'}">
+    <p>¿Está seguro de que desea eliminar esta unidad?</p>
+    <p-footer>
+        <button pButton type="button" label="Sí" (click)="deleteUnidad()"></button>
+        <button pButton type="button" label="No" (click)="cancelDelete()"></button>
+    </p-footer>
+</p-dialog>

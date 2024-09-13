@@ -1,0 +1,109 @@
+/* Estilo para el título */
+h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #007ad9; /* Color del título */
+    text-align: center; /* Centrar el título */
+  }
+  
+  /* Contenedor del filtro de búsqueda */
+  .filter-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+  
+  /* Estilo para el input de búsqueda */
+  .search-input {
+    width: 250px; /* Ajustar el ancho del campo de búsqueda */
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 14px; /* Ajustar el tamaño de fuente */
+  }
+  
+  /* Contenedor de la tabla */
+  .table-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    padding: 0 1rem; /* Añadir un poco de relleno horizontal */
+  }
+  
+  /* Estilo para la tabla */
+  .p-table {
+    width: 100%;
+    max-width: 900px; /* Ajustar el ancho máximo de la tabla */
+    border-collapse: collapse; /* Quitar el espacio entre bordes de las celdas */
+  }
+  
+  .p-table .p-table-thead > tr > th {
+    text-align: left;
+    background: #007ad9; /* Cambiar color de fondo del encabezado */
+    color: #ffffff; /* Cambiar color del texto del encabezado */
+    padding: 12px; /* Aumentar el padding para el encabezado */
+    font-size: 16px; /* Tamaño de fuente para los encabezados */
+  }
+  
+  .p-table .p-table-tbody > tr > td {
+    padding: 10px; /* Aumentar el padding para las celdas */
+  }
+  
+  .p-table .p-table-tbody > tr:hover {
+    background-color: #f5f5f5; /* Cambiar el color de fondo al pasar el ratón */
+  }
+  
+  /* Estilo para los botones en la tabla */
+  .p-button {
+    margin: 0 5px;
+    font-size: 14px; /* Ajustar el tamaño de fuente de los botones */
+  }
+  
+  /* Estilo para el diálogo de categorías */
+  .p-dialog {
+    border-radius: 8px;
+    width: 400px; /* Ampliar el ancho del diálogo */
+    padding: 20px; /* Añadir padding interno al diálogo */
+  }
+  
+  .p-dialog .p-dialog-header {
+    background-color: #007ad9;
+    color: #ffffff;
+  }
+  
+  .p-dialog .p-dialog-header .p-dialog-title {
+    font-size: 18px; /* Tamaño de fuente en el encabezado del diálogo */
+  }
+  
+  .p-dialog .p-dialog-footer {
+    text-align: right;
+    padding: 10px;
+  }
+  
+  /* Estilo para el formulario */
+  .p-fluid .p-field {
+    margin-bottom: 15px; /* Ajustar el margen inferior de los campos */
+  }
+  
+  .p-field label {
+    font-weight: bold;
+  }
+  
+  .p-field input[type="text"] {
+    width: 100%;
+    padding: 8px; /* Aumentar el padding en el input */
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Espaciado y estilo para los botones en el formulario */
+  .p-footer button {
+    margin-left: 10px; /* Añadir espacio entre botones */
+    font-size: 14px; /* Ajustar el tamaño de fuente de los botones */
+  }
+  
+  /* Estilo para el diálogo de confirmación */
+  .p-dialog .p-footer button {
+    margin: 0 10px; /* Espacio entre botones de confirmación */
+  }
+  
