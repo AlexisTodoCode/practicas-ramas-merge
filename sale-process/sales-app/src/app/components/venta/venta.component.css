@@ -1,0 +1,21 @@
+.venta-container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+button {
+  margin-top: 16px;
+}
+
+.totales {
+  margin-top: 20px;
+  font-weight: bold;
+}
