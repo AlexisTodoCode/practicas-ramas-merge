@@ -6,6 +6,7 @@ import { ClienteService } from '../../services/cliente.service';
 import { ProductoService } from '../../services/producto.service';
 import { VentaService } from '../../services/venta.service';
 import { Venta } from '../../interfaces/venta';
+import { VentaTableComponent } from '../venta-table/venta-table.component';
 import {
   FormGroup,
   FormBuilder,
@@ -40,6 +41,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
+    VentaTableComponent,
   ],
   templateUrl: './venta.component.html',
   styleUrls: ['./venta.component.css'],
@@ -51,10 +53,12 @@ export class VentaComponent implements OnInit {
   detalleVentas: DetalleVenta[] = [];
   dataSource = new MatTableDataSource<DetalleVenta>(this.detalleVentas);
 
-  ventas: Venta[]= [];
+  ventas: Venta[] = [];
   subtotal: number = 0;
   igv: number = 0;
   total: number = 0;
+  productoSeleccionado: Producto | null = null;
+  cantidadSeleccionada: number = 1;
 
   constructor(
     private fb: FormBuilder,
@@ -67,7 +71,6 @@ export class VentaComponent implements OnInit {
     this.obtenerClientes();
     this.obtenerProductos();
     this.iniciarFormulario();
-    this.obtenerVentas();
   }
 
   iniciarFormulario(): void {
@@ -92,20 +95,16 @@ export class VentaComponent implements OnInit {
       (error) => console.error('Error al obtener los productos', error)
     );
   }
-  obtenerVentas(): void {
-    this.ventaService.obtenerTodas().subscribe(
-      (ventas) => (this.ventas = ventas),
-      (error) => console.error('Error al obtener las ventas', error)
-    );
+  isProductoSeleccionado(producto: Producto): boolean {
+    return this.detalleVentas.some(detalle => detalle.producto.id === producto.id);
   }
-  
   agregarDetalleVenta(productoId: number, cantidad: number): void {
     const producto = this.productos.find((p) => p.id === productoId);
     if (producto && cantidad > 0) {
       const detalleExistente = this.detalleVentas.find(
         (detalle) => detalle.producto.id === productoId
       );
-
+  
       if (detalleExistente) {
         detalleExistente.cantidad += cantidad;
         detalleExistente.subtotal = detalleExistente.precioUnitario * detalleExistente.cantidad;
@@ -115,7 +114,7 @@ export class VentaComponent implements OnInit {
         const subtotalProducto = producto.precio * cantidad;
         const igvProducto = subtotalProducto * 0.18;
         const totalProducto = subtotalProducto + igvProducto;
-
+  
         const detalle: DetalleVenta = {
           id: 0,
           producto: producto,
@@ -124,23 +123,45 @@ export class VentaComponent implements OnInit {
           subtotal: subtotalProducto,
           igv: igvProducto,
           total: totalProducto,
-          venta: null,
+          venta: null, 
           estado: true,
         };
-
+  
         this.detalleVentas.push(detalle);
       }
-
+  
       this.dataSource.data = [...this.detalleVentas];
-      this.actualizarTotales()
+      this.actualizarTotales();
     }
   }
+
   eliminarDetalle(index: number): void {
     this.detalleVentas.splice(index, 1);
     this.dataSource.data = [...this.detalleVentas];
+    this.actualizarTotales();
   }
-  
-  
+
+  incrementarCantidad(index: number): void {
+    const detalle = this.detalleVentas[index];
+    detalle.cantidad += 1;
+    detalle.subtotal = detalle.precioUnitario * detalle.cantidad;
+    detalle.igv = detalle.subtotal * 0.18;
+    detalle.total = detalle.subtotal + detalle.igv;
+    this.dataSource.data = [...this.detalleVentas];
+    this.actualizarTotales();
+  }
+
+  decrementarCantidad(index: number): void {
+    const detalle = this.detalleVentas[index];
+    if (detalle.cantidad > 1) {
+      detalle.cantidad -= 1;
+      detalle.subtotal = detalle.precioUnitario * detalle.cantidad;
+      detalle.igv = detalle.subtotal * 0.18;
+      detalle.total = detalle.subtotal + detalle.igv;
+      this.dataSource.data = [...this.detalleVentas];
+      this.actualizarTotales();
+    }
+  }
 
   actualizarTotales(): void {
     this.subtotal = this.detalleVentas.reduce(
@@ -153,14 +174,14 @@ export class VentaComponent implements OnInit {
 
   guardarVenta(): void {
     if (this.ventaForm.invalid || this.detalleVentas.length === 0) {
-      return; // Si el formulario es inválido o no hay detalles, no hacer nada
+      return;
     }
-  
+
     const venta: Venta = {
       ...this.ventaForm.value,
       detalleVentas: this.detalleVentas.map((detalle) => ({
         ...detalle,
-        producto: { id: detalle.producto.id }, // Solo enviar el ID del producto
+        producto: { id: detalle.producto.id }, 
       })),
       subtotal: this.subtotal,
       igv: this.igv,
@@ -168,20 +189,18 @@ export class VentaComponent implements OnInit {
       cliente: { id: this.ventaForm.value.clienteId },
       usuario: { id: this.ventaForm.value.usuarioId },
     };
-  
+
     this.ventaService.crear(venta).subscribe(
       (ventaCreada) => {
         console.log('Venta creada', ventaCreada);
-  
-        // Limpiar formulario y detalles
-        this.ventaForm.reset(); // Limpia los campos del formulario
-        this.detalleVentas = []; // Limpia la lista de detalles
-        this.dataSource.data = []; // Actualiza el DataSource
-        this.subtotal = 0; // Reinicia los totales
+
+        this.ventaForm.reset(); 
+        this.detalleVentas = []; 
+        this.dataSource.data = []; 
+        this.subtotal = 0;
         this.igv = 0;
         this.total = 0;
-  
-        // Reiniciar formulario con valores predeterminados si es necesario
+
         this.iniciarFormulario();
       },
       (error) => {
@@ -189,5 +208,4 @@ export class VentaComponent implements OnInit {
       }
     );
   }
-  
 }

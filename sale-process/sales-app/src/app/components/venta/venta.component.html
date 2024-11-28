@@ -1,125 +1,120 @@
-<div class="venta-container">
-    <h2>Crear Venta</h2>
-    
-    <!-- Formulario para la Venta -->
-    <form [formGroup]="ventaForm" (ngSubmit)="guardarVenta()">
-      <!-- Selección de Cliente -->
-      <div class="form-group">
-        <mat-form-field appearance="fill">
-          <mat-label>Cliente</mat-label>
-          <mat-select formControlName="clienteId">
-            <mat-option *ngFor="let cliente of clientes" [value]="cliente.id">
-              {{ cliente.nombre }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-  
-      <!-- Fecha de Emisión -->
-      <div class="form-group">
-        <mat-form-field appearance="fill">
-          <mat-label>Fecha de Emisión</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="fechaEmision" type="text" />
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-      </div>
-  
-      <h3>Detalle de Venta</h3>
-  
-      <!-- Sección para agregar un nuevo detalle de venta (Producto y Cantidad) -->
-      <div class="form-group">
-        <mat-form-field appearance="fill">
-          <mat-label>Producto</mat-label>
-          <mat-select #productoSelect>
-            <mat-option *ngFor="let producto of productos" [value]="producto.id">
-              {{ producto.nombreProducto }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-  
-        <mat-form-field appearance="fill">
-          <mat-label>Cantidad</mat-label>
-          <input matInput type="number" #cantidadInput />
-        </mat-form-field>
-  
-        <button mat-raised-button color="primary" type="button" (click)="agregarDetalleVenta(productoSelect.value, +cantidadInput.value)">
-          Agregar
-        </button>
-      </div>
-  
-      <!-- Tabla para Detalles de Venta -->
-      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-        <ng-container matColumnDef="producto">
-          <th mat-header-cell *matHeaderCellDef>Producto</th>
-          <td mat-cell *matCellDef="let row">{{ row.producto.nombreProducto }}</td>
-        </ng-container>
-      
-        <ng-container matColumnDef="cantidad">
-          <th mat-header-cell *matHeaderCellDef>Cantidad</th>
-          <td mat-cell *matCellDef="let row">{{ row.cantidad }}</td>
-        </ng-container>
-      
-        <ng-container matColumnDef="precioUnitario">
-          <th mat-header-cell *matHeaderCellDef>Precio Unitario</th>
-          <td mat-cell *matCellDef="let row">{{ row.precioUnitario | currency }}</td>
-        </ng-container>
-      
-        <ng-container matColumnDef="subtotal">
-          <th mat-header-cell *matHeaderCellDef>Subtotal</th>
-          <td mat-cell *matCellDef="let row">{{ row.subtotal | currency }}</td>
-        </ng-container>
-      
-        <ng-container matColumnDef="total">
-          <th mat-header-cell *matHeaderCellDef>Total</th>
-          <td mat-cell *matCellDef="let row">{{ row.total | currency }}</td>
-        </ng-container>
-      
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>Acciones</th>
-          <td mat-cell *matCellDef="let row; let i = index">
-            <button mat-icon-button (click)="eliminarDetalle(i)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </ng-container>
-      
-        <tr mat-header-row *matHeaderRowDef="['producto', 'cantidad', 'precioUnitario', 'subtotal', 'total', 'actions']"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['producto', 'cantidad', 'precioUnitario', 'subtotal', 'total', 'actions']"></tr>
-      </table>
-      
-  
-      <!-- Totales -->
-      <div class="totales">
-        <p>Subtotal: {{ subtotal | currency }}</p>
-        <p>IGV: {{ igv | currency }} (18%)</p>
-        <p>Total: {{ total | currency }}</p>
-      </div>
-  
-      <!-- Botón Guardar -->
-      <button mat-raised-button color="accent" type="submit">Guardar Venta</button>
-    </form>
-  
-    <!-- Tabla de Ventas -->
-    <h3>Ventas Realizadas</h3>
-    <table mat-table [dataSource]="ventas" class="mat-elevation-z8">
-      <ng-container matColumnDef="cliente">
-        <th mat-header-cell *matHeaderCellDef>Cliente</th>
-        <td mat-cell *matCellDef="let venta">{{ venta.cliente.nombre }}</td>
-      </ng-container>
-  
-      <ng-container matColumnDef="fechaEmision">
-        <th mat-header-cell *matHeaderCellDef>Fecha de Emisión</th>
-        <td mat-cell *matCellDef="let venta">{{ venta.fechaEmision | date }}</td>
-      </ng-container>
-  
-      <ng-container matColumnDef="total">
-        <th mat-header-cell *matHeaderCellDef>Total</th>
-        <td mat-cell *matCellDef="let venta">{{ venta.total | currency }}</td>
-      </ng-container>
-  
-      <tr mat-header-row *matHeaderRowDef="[ 'fechaEmision', 'total']"></tr>
-      <tr mat-row *matRowDef="let row; columns: [ 'fechaEmision', 'total']"></tr>
-    </table>
+<!-- Formulario para la Venta -->
+<form [formGroup]="ventaForm">
+  <!-- Selección de Cliente -->
+  <div class="form-group">
+    <mat-form-field appearance="fill">
+      <mat-label>Cliente</mat-label>
+      <mat-select formControlName="clienteId">
+        <mat-option *ngFor="let cliente of clientes" [value]="cliente.id">
+          {{ cliente.nombre }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
+
+  <!-- Fecha de Emisión -->
+  <div class="form-group">
+    <mat-form-field appearance="fill">
+      <mat-label>Fecha de Emisión</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="fechaEmision" type="text" />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
+
   
+  <!-- Tabla para Selección de Producto -->
+  <h4>Seleccionar Producto</h4>
+  <table mat-table [dataSource]="productos" class="mat-elevation-z8">
+    <ng-container matColumnDef="nombreProducto">
+      <th mat-header-cell *matHeaderCellDef>Producto</th>
+      <td mat-cell *matCellDef="let producto">
+        {{ producto.nombreProducto }}
+      </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="precio">
+      <th mat-header-cell *matHeaderCellDef>Precio</th>
+      <td mat-cell *matCellDef="let producto">{{ producto.precio | currency }}</td>
+    </ng-container>
+    
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef>Acción</th>
+      <td mat-cell *matCellDef="let producto">
+        <button mat-icon-button
+        color="primary"
+        (click)="agregarDetalleVenta(producto.id, cantidadSeleccionada)"
+        [disabled]="isProductoSeleccionado(producto)">
+        <mat-icon>add</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+  
+  <tr mat-header-row *matHeaderRowDef="['nombreProducto', 'precio', 'acciones']"></tr>
+  <tr mat-row *matRowDef="let row; columns: ['nombreProducto', 'precio', 'acciones']"></tr>
+</table>
+
+
+<h3>Detalle de Venta</h3>
+  <!-- Tabla para Detalles de Venta -->
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <!-- Detalles de la venta -->
+    <ng-container matColumnDef="producto">
+      <th mat-header-cell *matHeaderCellDef>Producto</th>
+      <td mat-cell *matCellDef="let row">{{ row.producto.nombreProducto }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="cantidad">
+      <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+      <td mat-cell *matCellDef="let row; let i = index">
+        
+        <button mat-icon-button color="warn" (click)="decrementarCantidad(i)">
+          <mat-icon>remove</mat-icon>
+        </button>
+        {{ row.cantidad }}
+        <button mat-icon-button color="accent" (click)="incrementarCantidad(i)">
+          <mat-icon>add</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="precioUnitario">
+      <th mat-header-cell *matHeaderCellDef>Precio Unitario</th>
+      <td mat-cell *matCellDef="let row">{{ row.precioUnitario | currency }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="subtotal">
+      <th mat-header-cell *matHeaderCellDef>Subtotal</th>
+      <td mat-cell *matCellDef="let row">{{ row.subtotal | currency }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="total">
+      <th mat-header-cell *matHeaderCellDef>Total</th>
+      <td mat-cell *matCellDef="let row">{{ row.total | currency }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Acciones</th>
+      <td mat-cell *matCellDef="let row; let i = index">
+        <button mat-icon-button color="warn" (click)="eliminarDetalle(i)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['producto', 'cantidad', 'precioUnitario', 'subtotal', 'total', 'actions']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['producto', 'cantidad', 'precioUnitario', 'subtotal', 'total', 'actions']"></tr>
+  </table>
+
+  <!-- Totales -->
+  <div class="totales">
+    <p>Subtotal: {{ subtotal | currency }}</p>
+    <p>IGV: {{ igv | currency }} (18%)</p>
+    <p>Total: {{ total | currency }}</p>
+  </div>
+
+  <!-- Botón Guardar -->
+  <button mat-raised-button color="accent" type="button" (click)="guardarVenta()">Guardar Venta</button>
+  <app-venta-table></app-venta-table>
+
+</form>

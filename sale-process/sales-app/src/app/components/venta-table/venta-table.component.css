@@ -1,0 +1,36 @@
+.venta-table-container {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .buscador {
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  
+  .mat-form-field {
+    width: 100%;
+  }
+  
+  .mat-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .mat-header-cell, .mat-cell {
+    padding: 12px;
+    text-align: left;
+  }
+  
+  .mat-header-cell {
+    background-color: #f4f4f4;
+  }
+  
+  .mat-paginator {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  
