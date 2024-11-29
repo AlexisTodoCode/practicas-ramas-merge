@@ -21,7 +21,17 @@
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
   </div>
-
+ <!-- Selección de Tipo de Comprobante -->
+ <div class="form-group">
+  <mat-form-field appearance="fill">
+    <mat-label>Tipo de Comprobante</mat-label>
+    <mat-select formControlName="tipoComprobante">
+      <mat-option *ngFor="let tipo of tiposComprobante" [value]="tipo.value">
+        {{ tipo.label }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
   
   <!-- Tabla para Selección de Producto -->
   <h4>Seleccionar Producto</h4>

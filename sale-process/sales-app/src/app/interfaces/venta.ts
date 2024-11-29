@@ -8,6 +8,7 @@ export interface Venta {
   usuario: Usuario;  
   fechaEmision: string;  
   subtotal: number;
+  tipoComprobante: string; 
   igv: number;
   total: number;
   estado: boolean;

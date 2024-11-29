@@ -25,6 +25,7 @@ public class Venta {
 
     private Date fechaEmision;
     private Double subtotal;
+    private String tipoComprobante;
     private Double igv;
     private Double total;
 

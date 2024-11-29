@@ -1,24 +1,26 @@
 package sales.system.sales.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sales.system.sales.model.*;
+import sales.system.sales.repository.ComprobanteRepository;
 import sales.system.sales.repository.DetalleVentaRepository;
 import sales.system.sales.repository.VentaRepository;
 import sales.system.sales.service.VentaService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class VentaServiceImpl implements VentaService {
 
-    @Autowired
-    private DetalleVentaRepository detalleVentaRepository;
-    @Autowired
-    private VentaRepository ventaRepository;
+    private final DetalleVentaRepository detalleVentaRepository;
+    private final VentaRepository ventaRepository;
+    private final ComprobanteRepository comprobanteRepository;
 
     @Override
     public Optional<Venta> obtenerPorId(Long id) {
@@ -33,6 +35,7 @@ public class VentaServiceImpl implements VentaService {
     @Override
     @Transactional
     public Venta crear(Venta venta) {
+        // Crear la venta
         Venta nuevaVenta = new Venta();
         nuevaVenta.setFechaEmision(venta.getFechaEmision());
         nuevaVenta.setSubtotal(venta.getSubtotal());
@@ -70,6 +73,23 @@ public class VentaServiceImpl implements VentaService {
 
         detalleVentaRepository.saveAll(detalleVentas);
 
+        Comprobante comprobante = new Comprobante();
+        comprobante.setVenta(nuevaVenta);
+        comprobante.setFecha(new Date());
+
+        if ("B".equalsIgnoreCase(venta.getTipoComprobante())) {
+            comprobante.setSerie("B001");
+        } else if ("F".equalsIgnoreCase(venta.getTipoComprobante())) {
+            comprobante.setSerie("F001");
+        } else {
+            throw new RuntimeException("Tipo de comprobante no válido: " + venta.getTipoComprobante());
+        }
+
+        Optional<Comprobante> ultimoComprobanteOpt = comprobanteRepository.findTopBySerieOrderByNumeroDesc(comprobante.getSerie());
+        int nuevoNumero = ultimoComprobanteOpt.map(c -> Integer.parseInt(c.getNumero()) + 1).orElse(1);
+        comprobante.setNumero(String.format("%06d", nuevoNumero));
+        comprobante.setEstado(true);
+        comprobanteRepository.save(comprobante);
         return nuevaVenta;
     }
 

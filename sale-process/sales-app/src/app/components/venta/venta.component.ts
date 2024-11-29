@@ -59,7 +59,10 @@ export class VentaComponent implements OnInit {
   total: number = 0;
   productoSeleccionado: Producto | null = null;
   cantidadSeleccionada: number = 1;
-
+  tiposComprobante = [
+    { value: 'B', label: 'Boleta' },
+    { value: 'F', label: 'Factura' }
+  ];
   constructor(
     private fb: FormBuilder,
     private clienteService: ClienteService,
@@ -79,6 +82,7 @@ export class VentaComponent implements OnInit {
       clienteId: ['', Validators.required],
       usuarioId: [1, Validators.required],
       fechaEmision: [today.toISOString().slice(0, 16), Validators.required], 
+      tipoComprobante: ['', Validators.required],
     });
   }
 
@@ -176,12 +180,12 @@ export class VentaComponent implements OnInit {
     if (this.ventaForm.invalid || this.detalleVentas.length === 0) {
       return;
     }
-
+  
     const venta: Venta = {
       ...this.ventaForm.value,
       detalleVentas: this.detalleVentas.map((detalle) => ({
         ...detalle,
-        producto: { id: detalle.producto.id }, 
+        producto: { id: detalle.producto.id },
       })),
       subtotal: this.subtotal,
       igv: this.igv,
@@ -189,18 +193,16 @@ export class VentaComponent implements OnInit {
       cliente: { id: this.ventaForm.value.clienteId },
       usuario: { id: this.ventaForm.value.usuarioId },
     };
-
+  
     this.ventaService.crear(venta).subscribe(
       (ventaCreada) => {
         console.log('Venta creada', ventaCreada);
-
-        this.ventaForm.reset(); 
-        this.detalleVentas = []; 
-        this.dataSource.data = []; 
+        this.ventaForm.reset();
+        this.detalleVentas = [];
+        this.dataSource.data = [];
         this.subtotal = 0;
         this.igv = 0;
         this.total = 0;
-
         this.iniciarFormulario();
       },
       (error) => {
