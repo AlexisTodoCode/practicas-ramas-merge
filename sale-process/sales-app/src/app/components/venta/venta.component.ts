@@ -12,6 +12,7 @@ import {
   FormBuilder,
   Validators,
   ReactiveFormsModule,
+  FormsModule,
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -24,6 +25,8 @@ import { MatSortModule } from '@angular/material/sort';
 import { CommonModule } from '@angular/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { Usuario } from '../../interfaces/usuario';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-venta',
@@ -35,6 +38,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
+    FormsModule,
     MatInputModule,
     MatIconModule,
     MatButtonModule,
@@ -48,11 +52,13 @@ import { MatNativeDateModule } from '@angular/material/core';
 })
 export class VentaComponent implements OnInit {
   ventaForm!: FormGroup;
-  clientes: Cliente[] = [];
   productos: Producto[] = [];
+  clientes: Cliente[] = [];
+  usuarios: Usuario[] = [];
   detalleVentas: DetalleVenta[] = [];
   dataSource = new MatTableDataSource<DetalleVenta>(this.detalleVentas);
-
+  direccionCliente: string = ''; 
+  dniCliente: string = '';
   ventas: Venta[] = [];
   subtotal: number = 0;
   igv: number = 0;
@@ -61,30 +67,35 @@ export class VentaComponent implements OnInit {
   cantidadSeleccionada: number = 1;
   tiposComprobante = [
     { value: 'B', label: 'Boleta' },
-    { value: 'F', label: 'Factura' }
+    { value: 'F', label: 'Factura' },
   ];
   constructor(
     private fb: FormBuilder,
     private clienteService: ClienteService,
     private productoService: ProductoService,
-    private ventaService: VentaService
+    private ventaService: VentaService,
+    private usuarioService: UsuarioService
   ) {}
 
   ngOnInit(): void {
     this.obtenerClientes();
     this.obtenerProductos();
     this.iniciarFormulario();
+    this.obtenerUsuarios();
   }
 
   iniciarFormulario(): void {
     const today = new Date();
     this.ventaForm = this.fb.group({
       clienteId: ['', Validators.required],
-      usuarioId: [1, Validators.required],
-      fechaEmision: [today.toISOString().slice(0, 16), Validators.required], 
+      usuarioId: ['', Validators.required],
+      fechaEmision: [today.toISOString().slice(0, 16), Validators.required],
       tipoComprobante: ['', Validators.required],
+      direccion: ['', Validators.required], 
+      dniRuc: ['', Validators.required]     
     });
   }
+  
 
   obtenerClientes(): void {
     this.clienteService.obtenerTodos().subscribe(
@@ -92,6 +103,33 @@ export class VentaComponent implements OnInit {
       (error) => console.error('Error al obtener los clientes', error)
     );
   }
+  obtenerUsuarios(): void {
+    this.usuarioService.obtenerTodos().subscribe(
+      (usuarios) => {
+        this.usuarios = usuarios;
+        console.log('hoal', this.usuarios);
+      },
+      (error) => console.error('Error al obtener los clientes', error)
+    );
+  }
+
+  onClienteSeleccionado(event: any): void {
+    const clienteId = event.value;
+  
+    const clienteSeleccionado = this.clientes.find(
+      (cliente) => cliente.id === clienteId
+    );
+    if (clienteSeleccionado) {
+      this.direccionCliente = clienteSeleccionado.direccion;
+      this.dniCliente = clienteSeleccionado.dniRuc;
+  
+      this.ventaForm.patchValue({
+        direccion: this.direccionCliente,
+        dniRuc: this.dniCliente
+      });
+    }
+  }
+  
 
   obtenerProductos(): void {
     this.productoService.obtenerTodos().subscribe(
@@ -100,9 +138,12 @@ export class VentaComponent implements OnInit {
     );
   }
   isProductoSeleccionado(producto: Producto): boolean {
-    return this.detalleVentas.some(detalle => detalle.producto.id === producto.id);
+    return this.detalleVentas.some(
+      (detalle) => detalle.producto.id === producto.id
+    );
   }
-  agregarDetalleVenta(productoId: number, cantidad: number): void {
+  
+  agregarDetalleVenta(productoId: number, cantidad: number, descuento: number = 0): void {
     const producto = this.productos.find((p) => p.id === productoId);
     if (producto && cantidad > 0) {
       const detalleExistente = this.detalleVentas.find(
@@ -110,12 +151,17 @@ export class VentaComponent implements OnInit {
       );
   
       if (detalleExistente) {
+        // Actualizar detalle existente
         detalleExistente.cantidad += cantidad;
-        detalleExistente.subtotal = detalleExistente.precioUnitario * detalleExistente.cantidad;
+        detalleExistente.desconto = descuento >= 0 ? descuento : 0; // Prevent negative discount
+        detalleExistente.subtotal = 
+          detalleExistente.precioUnitario * detalleExistente.cantidad - detalleExistente.desconto;
         detalleExistente.igv = detalleExistente.subtotal * 0.18;
         detalleExistente.total = detalleExistente.subtotal + detalleExistente.igv;
       } else {
-        const subtotalProducto = producto.precio * cantidad;
+        // Crear nuevo detalle
+        const finalDesconto = descuento >= 0 ? descuento : 0; // Prevent negative discount
+        const subtotalProducto = producto.precio * cantidad - finalDesconto;
         const igvProducto = subtotalProducto * 0.18;
         const totalProducto = subtotalProducto + igvProducto;
   
@@ -124,20 +170,87 @@ export class VentaComponent implements OnInit {
           producto: producto,
           cantidad: cantidad,
           precioUnitario: producto.precio,
+          desconto: finalDesconto,
           subtotal: subtotalProducto,
           igv: igvProducto,
           total: totalProducto,
-          venta: null, 
+          venta: null,
           estado: true,
         };
   
         this.detalleVentas.push(detalle);
       }
   
+      // Refrescar la tabla y los totales
       this.dataSource.data = [...this.detalleVentas];
       this.actualizarTotales();
     }
   }
+  
+  incrementarCantidad(index: number): void {
+    const detalle = this.detalleVentas[index];
+    
+    // Incrementar la cantidad
+    detalle.cantidad += 1;
+    
+    // Mantener el descuento actual
+    const descuentoAplicado = detalle.desconto >= 0 ? detalle.desconto : 0;
+  
+    // Recalcular el subtotal, IGV y total con el descuento actual
+    detalle.subtotal = detalle.precioUnitario * detalle.cantidad - descuentoAplicado;
+    detalle.igv = detalle.subtotal * 0.18;
+    detalle.total = detalle.subtotal + detalle.igv;
+  
+    // Actualizar la tabla y los totales
+    this.dataSource.data = [...this.detalleVentas];
+    this.actualizarTotales();
+  }
+  
+  decrementarCantidad(index: number): void {
+    const detalle = this.detalleVentas[index];
+    
+    if (detalle.cantidad > 1) {
+      // Decrementar la cantidad
+      detalle.cantidad -= 1;
+  
+      // Mantener el descuento actual
+      const descuentoAplicado = detalle.desconto >= 0 ? detalle.desconto : 0;
+  
+      // Recalcular el subtotal, IGV y total con el descuento actual
+      detalle.subtotal = detalle.precioUnitario * detalle.cantidad - descuentoAplicado;
+      detalle.igv = detalle.subtotal * 0.18;
+      detalle.total = detalle.subtotal + detalle.igv;
+  
+      // Actualizar la tabla y los totales
+      this.dataSource.data = [...this.detalleVentas];
+      this.actualizarTotales();
+    }
+  }
+  
+  actualizarDescuento(index: number, descuento: number): void {
+    const detalle = this.detalleVentas[index];
+    
+    // Asegurarse de que el descuento no sea negativo
+    detalle.desconto = descuento >= 0 ? descuento : 0; 
+  
+    // Recalcular los valores con el nuevo descuento
+    detalle.subtotal = detalle.precioUnitario * detalle.cantidad - detalle.desconto;
+    detalle.igv = detalle.subtotal * 0.18;
+    detalle.total = detalle.subtotal + detalle.igv;
+  
+    // Actualizar tabla y totales
+    this.dataSource.data = [...this.detalleVentas];
+    this.actualizarTotales();
+  }
+  
+  
+  actualizarTotales(): void {
+    this.subtotal = this.detalleVentas.reduce((acc, item) => acc + item.subtotal, 0);
+    this.igv = this.detalleVentas.reduce((acc, item) => acc + item.igv, 0);
+    this.total = this.subtotal + this.igv;
+  }
+  
+  
 
   eliminarDetalle(index: number): void {
     this.detalleVentas.splice(index, 1);
@@ -145,47 +258,19 @@ export class VentaComponent implements OnInit {
     this.actualizarTotales();
   }
 
-  incrementarCantidad(index: number): void {
-    const detalle = this.detalleVentas[index];
-    detalle.cantidad += 1;
-    detalle.subtotal = detalle.precioUnitario * detalle.cantidad;
-    detalle.igv = detalle.subtotal * 0.18;
-    detalle.total = detalle.subtotal + detalle.igv;
-    this.dataSource.data = [...this.detalleVentas];
-    this.actualizarTotales();
-  }
-
-  decrementarCantidad(index: number): void {
-    const detalle = this.detalleVentas[index];
-    if (detalle.cantidad > 1) {
-      detalle.cantidad -= 1;
-      detalle.subtotal = detalle.precioUnitario * detalle.cantidad;
-      detalle.igv = detalle.subtotal * 0.18;
-      detalle.total = detalle.subtotal + detalle.igv;
-      this.dataSource.data = [...this.detalleVentas];
-      this.actualizarTotales();
-    }
-  }
-
-  actualizarTotales(): void {
-    this.subtotal = this.detalleVentas.reduce(
-      (acc, item) => acc + item.subtotal,
-      0
-    );
-    this.igv = this.detalleVentas.reduce((acc, item) => acc + item.igv, 0);
-    this.total = this.subtotal + this.igv;
-  }
+  
 
   guardarVenta(): void {
     if (this.ventaForm.invalid || this.detalleVentas.length === 0) {
       return;
     }
-  
+
     const venta: Venta = {
       ...this.ventaForm.value,
       detalleVentas: this.detalleVentas.map((detalle) => ({
         ...detalle,
         producto: { id: detalle.producto.id },
+        desconto: detalle.desconto,
       })),
       subtotal: this.subtotal,
       igv: this.igv,
@@ -193,7 +278,7 @@ export class VentaComponent implements OnInit {
       cliente: { id: this.ventaForm.value.clienteId },
       usuario: { id: this.ventaForm.value.usuarioId },
     };
-  
+
     this.ventaService.crear(venta).subscribe(
       (ventaCreada) => {
         console.log('Venta creada', ventaCreada);

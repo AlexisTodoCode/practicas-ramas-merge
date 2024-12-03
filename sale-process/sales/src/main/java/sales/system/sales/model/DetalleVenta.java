@@ -24,6 +24,7 @@ public class DetalleVenta {
     private Integer cantidad;
     private Double precioUnitario;
     private Double subtotal;
+    private Double desconto;
     private Double igv;
     private Double total;
 

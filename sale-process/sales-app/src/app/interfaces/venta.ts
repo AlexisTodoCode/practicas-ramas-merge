@@ -4,11 +4,11 @@ import { DetalleVenta } from './detalle-venta';
 
 export interface Venta {
   id: number;
+  tipoComprobante: string; 
   cliente: Cliente;  
   usuario: Usuario;  
   fechaEmision: string;  
   subtotal: number;
-  tipoComprobante: string; 
   igv: number;
   total: number;
   estado: boolean;

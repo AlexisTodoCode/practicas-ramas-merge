@@ -7,6 +7,7 @@ export interface DetalleVenta {
   producto: Producto;
   cantidad: number;
   precioUnitario: number;
+  desconto: number;
   subtotal: number;
   igv: number;
   total: number;

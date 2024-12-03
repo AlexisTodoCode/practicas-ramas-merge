@@ -41,6 +41,7 @@ public class VentaServiceImpl implements VentaService {
         nuevaVenta.setSubtotal(venta.getSubtotal());
         nuevaVenta.setIgv(venta.getIgv());
         nuevaVenta.setTotal(venta.getTotal());
+        nuevaVenta.setTipoComprobante(venta.getTipoComprobante());
 
         Cliente cliente = new Cliente();
         cliente.setId(venta.getCliente().getId());
@@ -64,6 +65,7 @@ public class VentaServiceImpl implements VentaService {
             detalleVenta.setSubtotal(detalleDTO.getSubtotal());
             detalleVenta.setIgv(detalleDTO.getIgv());
             detalleVenta.setTotal(detalleDTO.getTotal());
+            detalleVenta.setDesconto(detalleDTO.getDesconto());
             detalleVenta.setVenta(nuevaVenta);
 
             detalleVentas.add(detalleVenta);
