@@ -204,17 +204,18 @@ export class VentaComponent implements OnInit {
       if (detalleExistente) {
         // Actualizar detalle existente
         detalleExistente.cantidad += cantidad;
-        detalleExistente.desconto = descuento >= 0 ? descuento : 0; // Prevent negative discount
-        detalleExistente.subtotal = 
-          detalleExistente.precioUnitario * detalleExistente.cantidad - detalleExistente.desconto;
+        detalleExistente.desconto = descuento >= 0 ? descuento : 0; // Asegurar que el descuento sea positivo
+        detalleExistente.subtotal = detalleExistente.precioUnitario * detalleExistente.cantidad;
+        detalleExistente.subtotal = detalleExistente.subtotal * (1 - detalleExistente.desconto / 100); // Aplicar descuento como porcentaje
         detalleExistente.igv = detalleExistente.subtotal * 0.18;
         detalleExistente.total = detalleExistente.subtotal + detalleExistente.igv;
       } else {
         // Crear nuevo detalle
-        const finalDesconto = descuento >= 0 ? descuento : 0; // Prevent negative discount
-        const subtotalProducto = producto.precio * cantidad - finalDesconto;
-        const igvProducto = subtotalProducto * 0.18;
-        const totalProducto = subtotalProducto + igvProducto;
+        const finalDesconto = descuento >= 0 ? descuento : 0; // Asegurar que el descuento sea positivo
+        const subtotalProducto = producto.precio * cantidad;
+        const subtotalConDescuento = subtotalProducto * (1 - finalDesconto / 100); // Aplicar descuento como porcentaje
+        const igvProducto = subtotalConDescuento * 0.18;
+        const totalProducto = subtotalConDescuento + igvProducto;
   
         const detalle: DetalleVenta = {
           id: 0,
@@ -248,7 +249,8 @@ export class VentaComponent implements OnInit {
     const descuentoAplicado = detalle.desconto >= 0 ? detalle.desconto : 0;
   
     // Recalcular el subtotal, IGV y total con el descuento actual
-    detalle.subtotal = detalle.precioUnitario * detalle.cantidad - descuentoAplicado;
+    detalle.subtotal = detalle.precioUnitario * detalle.cantidad;
+    detalle.subtotal = detalle.subtotal * (1 - descuentoAplicado / 100); // Aplicar descuento como porcentaje
     detalle.igv = detalle.subtotal * 0.18;
     detalle.total = detalle.subtotal + detalle.igv;
   
@@ -268,7 +270,8 @@ export class VentaComponent implements OnInit {
       const descuentoAplicado = detalle.desconto >= 0 ? detalle.desconto : 0;
   
       // Recalcular el subtotal, IGV y total con el descuento actual
-      detalle.subtotal = detalle.precioUnitario * detalle.cantidad - descuentoAplicado;
+      detalle.subtotal = detalle.precioUnitario * detalle.cantidad;
+      detalle.subtotal = detalle.subtotal * (1 - descuentoAplicado / 100); // Aplicar descuento como porcentaje
       detalle.igv = detalle.subtotal * 0.18;
       detalle.total = detalle.subtotal + detalle.igv;
   
@@ -281,11 +284,9 @@ export class VentaComponent implements OnInit {
   actualizarDescuento(index: number, descuento: number): void {
     const detalle = this.detalleVentas[index];
     
-    // Asegurarse de que el descuento no sea negativo
     detalle.desconto = descuento >= 0 ? descuento : 0; 
-  
-    // Recalcular los valores con el nuevo descuento
-    detalle.subtotal = detalle.precioUnitario * detalle.cantidad - detalle.desconto;
+    detalle.subtotal = detalle.precioUnitario * detalle.cantidad;
+    detalle.subtotal = detalle.subtotal * (1 - detalle.desconto / 100); 
     detalle.igv = detalle.subtotal * 0.18;
     detalle.total = detalle.subtotal + detalle.igv;
   
@@ -293,8 +294,7 @@ export class VentaComponent implements OnInit {
     this.dataSource.data = [...this.detalleVentas];
     this.actualizarTotales();
   }
-  
-  
+
   actualizarTotales(): void {
     this.subtotal = this.detalleVentas.reduce((acc, item) => acc + item.subtotal, 0);
     this.igv = this.detalleVentas.reduce((acc, item) => acc + item.igv, 0);

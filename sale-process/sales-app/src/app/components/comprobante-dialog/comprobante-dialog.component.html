@@ -24,7 +24,12 @@
       </div>
     </li>
   </ul>
+
+  <div class="venta-total">
+    <p><strong>Total de la Venta:</strong> {{ data.venta.total | currency }}</p>
+  </div>
 </mat-dialog-content>
+
 <mat-dialog-actions class="dialog-actions">
   <button mat-button mat-dialog-close class="close-button">Cerrar</button>
 </mat-dialog-actions>
