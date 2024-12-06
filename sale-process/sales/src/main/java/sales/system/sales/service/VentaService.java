@@ -1,5 +1,6 @@
 package sales.system.sales.service;
 
+import sales.system.sales.model.Comprobante;
 import sales.system.sales.model.Venta;
 
 import java.util.List;
@@ -11,4 +12,6 @@ public interface VentaService {
     Venta crear(Venta venta);
     Venta actualizar(Long id, Venta venta);  // Nuevo método para actualizar
     void eliminar(Long id);
+
+    Comprobante obtenerDatosComprobante(Long idVenta);
 }

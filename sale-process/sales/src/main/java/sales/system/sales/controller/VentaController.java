@@ -1,6 +1,7 @@
 package sales.system.sales.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sales.system.sales.model.*;
@@ -62,6 +63,15 @@ public class VentaController {
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/comprobante/{idVenta}")
+    public ResponseEntity<Comprobante> obtenerComprobante(@PathVariable Long idVenta) {
+        try {
+            Comprobante comprobante = ventaService.obtenerDatosComprobante(idVenta);
+            return new ResponseEntity<>(comprobante, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 }

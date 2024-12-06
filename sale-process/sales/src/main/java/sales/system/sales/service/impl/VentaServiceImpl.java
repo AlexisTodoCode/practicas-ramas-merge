@@ -130,4 +130,17 @@ public class VentaServiceImpl implements VentaService {
     public void eliminar(Long id) {
         ventaRepository.deleteById(id);
     }
+    @Override
+    public Comprobante obtenerDatosComprobante(Long idVenta) {
+        Optional<Venta> ventaOpt = ventaRepository.findById(idVenta);
+        if (!ventaOpt.isPresent()) {
+            throw new RuntimeException("Venta no encontrada con id: " + idVenta);
+        }
+        Venta venta = ventaOpt.get();
+        Optional<Comprobante> comprobanteOpt = comprobanteRepository.findByVenta(venta);
+        if (!comprobanteOpt.isPresent()) {
+            throw new RuntimeException("No se encontró un comprobante asociado a la venta con id: " + idVenta);
+        }
+        return comprobanteOpt.get();
+    }
 }
