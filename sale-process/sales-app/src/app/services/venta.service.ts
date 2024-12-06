@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Venta } from '../interfaces/venta';
-
+import { Comprobante } from '../interfaces/comprobante'; 
 @Injectable({
   providedIn: 'root'
 })
@@ -30,5 +30,9 @@ export class VentaService {
 
   eliminar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  obtenerComprobante(idVenta: number): Observable<Comprobante> {
+    return this.http.get<Comprobante>(`${this.apiUrl}/comprobante/${idVenta}`);
   }
 }

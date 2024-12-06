@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Cliente } from '../../interfaces/cliente';
 import { Producto } from '../../interfaces/producto';
 import { DetalleVenta } from '../../interfaces/detalle-venta';
@@ -6,27 +6,22 @@ import { ClienteService } from '../../services/cliente.service';
 import { ProductoService } from '../../services/producto.service';
 import { VentaService } from '../../services/venta.service';
 import { Venta } from '../../interfaces/venta';
-import { VentaTableComponent } from '../venta-table/venta-table.component';
-import {
-  FormGroup,
-  FormBuilder,
-  Validators,
-  ReactiveFormsModule,
-  FormsModule,
-} from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 import { CommonModule } from '@angular/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { Usuario } from '../../interfaces/usuario';
 import { UsuarioService } from '../../services/usuario.service';
+import { ComprobanteDialogComponent } from '../comprobante-dialog/comprobante-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-venta',
@@ -45,7 +40,6 @@ import { UsuarioService } from '../../services/usuario.service';
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    VentaTableComponent,
   ],
   templateUrl: './venta.component.html',
   styleUrls: ['./venta.component.css'],
@@ -57,9 +51,11 @@ export class VentaComponent implements OnInit {
   usuarios: Usuario[] = [];
   detalleVentas: DetalleVenta[] = [];
   dataSource = new MatTableDataSource<DetalleVenta>(this.detalleVentas);
+  ventas: Venta[] = [];
+  dataSources = new MatTableDataSource<Venta>(this.ventas);
+  displayedColumns: string[] = ['id', 'cliente', 'fechaEmision', 'total', 'actions'];
   direccionCliente: string = ''; 
   dniCliente: string = '';
-  ventas: Venta[] = [];
   subtotal: number = 0;
   igv: number = 0;
   total: number = 0;
@@ -69,12 +65,17 @@ export class VentaComponent implements OnInit {
     { value: 'B', label: 'Boleta' },
     { value: 'F', label: 'Factura' },
   ];
+
+  @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
+  @ViewChild(MatSort) sort: MatSort | null = null;
+
   constructor(
     private fb: FormBuilder,
     private clienteService: ClienteService,
     private productoService: ProductoService,
     private ventaService: VentaService,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -82,6 +83,56 @@ export class VentaComponent implements OnInit {
     this.obtenerProductos();
     this.iniciarFormulario();
     this.obtenerUsuarios();
+    this.obtenerVentas();
+
+    this.dataSources.filterPredicate = (data: Venta, filter: string) => {
+      const transformedFilter = filter.trim().toLowerCase();
+      const cliente = data.cliente.nombre.toLowerCase().includes(transformedFilter);
+      const total = data.total.toString().includes(transformedFilter);
+      return cliente || total;
+    };
+  }
+
+  obtenerVentas(): void {
+    this.ventaService.obtenerTodas().subscribe(
+      (ventas) => {
+        this.ventas = ventas;
+        this.dataSources.data = ventas; 
+        if (this.paginator) {
+          this.dataSources.paginator = this.paginator; 
+        }
+        if (this.sort) {
+          this.dataSources.sort = this.sort;
+        }
+      },
+      (error) => console.error('Error al obtener las ventas', error)
+    );
+  }
+
+  verDetalles(id: number): void {
+    console.log('Ver detalles de la venta con ID:', id);
+    
+    // Obtener el comprobante de la venta
+    this.ventaService.obtenerComprobante(id).subscribe(
+      (comprobante) => {
+        // Abrir un modal con el comprobante
+        this.dialog.open(ComprobanteDialogComponent, {
+          data: comprobante // Pasar el comprobante al dialog
+        });
+      },
+      (error) => {
+        console.error('Error al obtener el comprobante:', error);
+      }
+    );
+  }
+
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSources.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSources.paginator) {
+      this.dataSources.paginator.firstPage();
+    }
   }
 
   iniciarFormulario(): void {
@@ -289,6 +340,7 @@ export class VentaComponent implements OnInit {
         this.igv = 0;
         this.total = 0;
         this.iniciarFormulario();
+        this.obtenerVentas();
       },
       (error) => {
         console.error('Error al crear la venta', error);

@@ -1,0 +1,30 @@
+<h2 mat-dialog-title class="dialog-title">Comprobante de Venta</h2>
+<mat-dialog-content class="dialog-content">
+  <div class="comprobante-info">
+    <p><strong>ID de Comprobante:</strong> {{ data.id }}</p>
+    <p><strong>Fecha:</strong> {{ data.fecha | date: 'short' }}</p>
+    <p><strong>Número:</strong> {{ data.numero }}</p>
+    <p><strong>Serie:</strong> {{ data.serie }}</p>
+    <p><strong>Estado:</strong> <span [ngClass]="{ 'activo': data.estado, 'inactivo': !data.estado }">{{ data.estado ? 'Activo' : 'Inactivo' }}</span></p>
+  </div>
+
+  <h3 class="details-title">Detalles de la Venta</h3>
+  <ul class="venta-details">
+    <li *ngFor="let detalle of data.venta.detalleVentas" class="detalle-item">
+      <div class="detalle-row">
+        <p><strong>Producto:</strong> {{ detalle.producto.nombreProducto }}</p>
+        <p><strong>Cantidad:</strong> {{ detalle.cantidad }}</p>
+      </div>
+      <div class="detalle-row">
+        <p><strong>Subtotal:</strong> {{ detalle.subtotal | currency }}</p>
+        <p><strong>IGV:</strong> {{ detalle.igv | currency }}</p>
+      </div>
+      <div class="detalle-row total-row">
+        <p><strong>Total:</strong> {{ detalle.total | currency }}</p>
+      </div>
+    </li>
+  </ul>
+</mat-dialog-content>
+<mat-dialog-actions class="dialog-actions">
+  <button mat-button mat-dialog-close class="close-button">Cerrar</button>
+</mat-dialog-actions>

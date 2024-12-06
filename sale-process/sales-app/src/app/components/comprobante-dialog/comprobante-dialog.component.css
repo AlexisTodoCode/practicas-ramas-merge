@@ -1,0 +1,96 @@
+/* Estilos generales del diálogo */
+.dialog-title {
+    text-align: center;
+    font-size: 1.8em;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  /* Estilos del contenido del diálogo */
+  .dialog-content {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+  }
+  
+  /* Estilo para la información del comprobante */
+  .comprobante-info {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .comprobante-info p {
+    margin: 5px 0;
+  }
+  
+  .comprobante-info strong {
+    color: #34495e;
+  }
+  
+  .comprobante-info .activo {
+    color: #27ae60;
+  }
+  
+  .comprobante-info .inactivo {
+    color: #e74c3c;
+  }
+  
+  /* Estilos para los detalles de la venta */
+  .details-title {
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #34495e;
+  }
+  
+  .venta-details {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .detalle-item {
+    background-color: #ecf0f1;
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #dcdfe1;
+  }
+  
+  .detalle-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .detalle-row p {
+    margin: 0;
+  }
+  
+  .total-row {
+    font-weight: bold;
+    background-color: #f4f6f7;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #dcdfe1;
+  }
+  
+  /* Estilo del botón de cerrar */
+  .dialog-actions {
+    text-align: center;
+  }
+  
+  .close-button {
+    background-color: #3498db;
+    color: white;
+    font-size: 1.2em;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 10px;
+  }
+  
+  .close-button:hover {
+    background-color: #2980b9;
+    cursor: pointer;
+  }
+  
